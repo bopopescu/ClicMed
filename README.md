@@ -1,7 +1,7 @@
-# ClicMed
-Projet - Cas ClicMed
-ESGI - Groupe SRC1 - 3E
-
+# ESGI - Groupe SRC1 - 3E
+## ClicMed
+----------------------------------
+## Roster
 KOSTAS
 Alexandre
 
