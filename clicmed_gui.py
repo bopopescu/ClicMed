@@ -1,8 +1,8 @@
-import tkinter as tk
-import mysql.connector as mysql
 import hashlib
 import os
 import sys
+import tkinter as tk
+import mysql.connector as mysql
 
 # Settings variables
 HOST = 'benjamin.beyerle.fr'
