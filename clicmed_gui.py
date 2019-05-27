@@ -87,6 +87,7 @@ def check_user(username, password_input, root_framerame, password_label, root_fr
             user(root_frame)
 
 
+# Admin panel with all the tools and full access
 def admin(root_frame):
     clear_window(root_frame)
     root_frame.configure(background='#3c3f41')
@@ -96,6 +97,7 @@ def admin(root_frame):
     root_frame.minsize(450, 330)
 
 
+# User panel with less tools and restricted access
 def user(root_frame):
     clear_window(root_frame)
     root_frame.configure(background='#3c3f41')
