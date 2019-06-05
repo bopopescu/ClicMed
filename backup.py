@@ -10,14 +10,16 @@ print(root_directory)
 date = datetime.datetime.now().strftime('%Y-%m-%d') #on recupere la date dans une variable
 
 print("\n-----------------------------------------------------------\n")
-print("Sauvegarde de " + root_directory + "docs" + "\n")
+print("Backup of " + root_directory + "docs" + "\n")
 print("-----------------------------------------------------------\n")
 
 #creation de l'archive backup_XX-XX-XX.tar.gz contenant le repertoire "docs" dans le repertoire de destination
-shutil.make_archive(
-    root_dest + '/' + 'backup_' + date, 'gztar', 
-    root_directory,
-    'docs',
-
-)
+try :
+        shutil.make_archive(
+                root_dest + '/' + 'backup_' + date, 'gztar',
+                root_directory,
+                'docs',
+                )
+except :
+        print ("File or directory doesn't exist !!!")
 
