@@ -9,3 +9,7 @@ def admin(root_frame):
     root_frame.geometry('450x330')
     root_frame.maxsize(450, 330)
     root_frame.minsize(450, 330)
+
+    login_btn = settings.tk.Button(root_frame, text='User Management', command=lambda: settings.user_mgmt.main_frame(
+        root_frame))
+    login_btn.grid(row=3, column=1, sticky='E')

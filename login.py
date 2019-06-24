@@ -38,8 +38,8 @@ def login_window(root_frame):
     password = settings.tk.Entry(root_frame, show="*", width=15)
     password.grid(row=2, column=1, columnspan=2, sticky='W')
 
-    login_btn = settings.tk.Button(root_frame, text='Login', command=lambda: check_user(user.get(), password.get(), root_frame,
-                                                                            password, root_frame))
+    login_btn = settings.tk.Button(root_frame, text='Login', command=lambda: check_user(user.get(), password.get(),
+                                                                                        password, root_frame))
     login_btn.grid(row=3, column=1, sticky='E')
 
     exit_btn = settings.tk.Button(root_frame, text='Exit', command=root_frame.destroy)
@@ -47,16 +47,15 @@ def login_window(root_frame):
 
 
 # Function to verify if user is in the database (username + password)
-def check_user(username, password_input, root_framerame, password_label, root_frame):
+def check_user(username, password_input, password_label, root_frame):
 
     hashed_password = password_hash(password_input)
 
     cnx = settings.mysql.connect(host=settings.HOST, user=settings.MYSQL_USER, password=settings.MYSQL_USER_PWD,
                                  database=settings.MYSQL_DB)
     cursor = cnx.cursor(buffered=True)
-    query = ("SELECT Username, PasswordHash, GroupId FROM Users WHERE Username = \'%s\' AND PasswordHash = \'%s\'" %
-             (username, hashed_password))
-    cursor.execute(query)
+    cursor.execute("SELECT Username, PasswordHash, GroupId FROM Users WHERE Username = %s AND PasswordHash = %s",
+                   (username, hashed_password))
     records = cursor.fetchall()
     cursor.close()
     cnx.close()

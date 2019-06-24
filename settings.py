@@ -6,6 +6,7 @@ import admin_frame
 import user_frame
 import mysql.connector as mysql
 import hashlib
+import user_mgmt
 
 
 # Settings global variables
