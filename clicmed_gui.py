@@ -51,8 +51,8 @@ def login_window(root_frame):
     password = tk.Entry(root_frame, show="*", width=15)
     password.grid(row=2, column=1, columnspan=2, sticky='W')
 
-    login_btn = tk.Button(root_frame, text='Login', command=lambda: check_user(user.get(), password.get(), root_frame,
-                                                                            password, root_frame))
+    login_btn = tk.Button(root_frame, text='Login', command=lambda: check_user(user.get(), password.get(),
+                                                                               password, root_frame))
     login_btn.grid(row=3, column=1, sticky='E')
 
     exit_btn = tk.Button(root_frame, text='Exit', command=root_frame.destroy)
@@ -60,15 +60,14 @@ def login_window(root_frame):
 
 
 # Function to verify if user is in the database (username + password)
-def check_user(username, password_input, root_framerame, password_label, root_frame):
+def check_user(username, password_input, password_label, root_frame):
 
     hashed_password = password_hash(password_input)
 
     cnx = mysql.connect(host=HOST, user=MYSQL_USER, password=MYSQL_USER_PWD, database=MYSQL_DB)
     cursor = cnx.cursor(buffered=True)
-    query = ("SELECT Username, PasswordHash, GroupId FROM Users WHERE Username = \'%s\' AND PasswordHash = \'%s\'" %
-             (username, hashed_password))
-    cursor.execute(query)
+    cursor.execute("SELECT Username, PasswordHash, GroupId FROM Users WHERE Username = %s AND PasswordHash = %s",
+                   (username, hashed_password))
     records = cursor.fetchall()
     cursor.close()
     cnx.close()
@@ -77,7 +76,7 @@ def check_user(username, password_input, root_framerame, password_label, root_fr
         group_id = records[0][2]
     except IndexError:
         incorrect = tk.Label(root_frame, image=img_error, background='#3c3f41')
-        incorrect.grid(row=1, column=4, sticky='W')
+        incorrect.grid(row=0, column=0, sticky='W')
 
         password_label.delete(0, tk.END)
     else:
@@ -96,17 +95,49 @@ def admin(root_frame):
     root_frame.maxsize(450, 330)
     root_frame.minsize(450, 330)
 
+    login_btn = tk.Button(root_frame, text='User Management', command=lambda: user_mgmt(root_frame))
+    login_btn.grid(row=3, column=1, sticky='E')
+
 
 # User panel with less tools and restricted access
 def user(root_frame):
     clear_window(root_frame)
     root_frame.configure(background='#3c3f41')
-    root_frame.title('Clic Med Admin')
+    root_frame.title('Clic Med User')
     root_frame.geometry('450x330')
     root_frame.maxsize(450, 330)
     root_frame.minsize(450, 330)
 
 
+def user_mgmt(root_frame):
+    clear_window(root_frame)
+    root_frame.configure(background='#3c3f41')
+    root_frame.title('User Management')
+    root_frame.geometry('450x330')
+    root_frame.maxsize(450, 330)
+    root_frame.minsize(450, 330)
+
+    cnx = mysql.connect(host=HOST, user=MYSQL_USER, password=MYSQL_USER_PWD, database=MYSQL_DB)
+    cursor = cnx.cursor(buffered=True)
+    cursor.execute("SELECT * FROM Users")
+    records = cursor.fetchall()
+    nb_rows = cursor.rowcount
+    cursor.close()
+    cnx.close()
+
+    for i in range(0, nb_rows):
+        edit_btn = tk.Button(root_frame, text='Edit', command=lambda: user_edit())
+        edit_btn.grid(row=1+i, column=0, sticky='E')
+        del_btn = tk.Button(root_frame, text='Delete', command=lambda: user_del())
+        del_btn.grid(row=1+i, column=1, sticky='E')
+
+
+def user_del():
+    print('test')
+
+
+def user_edit():
+    print('test')
 
 # ---------------------------------------------------------------------------------------------------------------------
 # Main execution of program

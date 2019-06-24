@@ -1,10 +1,8 @@
-#usr/bin/python
-import time
-import itertools, string
-import hashlib
-import sys
-import signal
-import threading
+# Auteurs: Benjamin BEYERLE - Philippe DA SILVA OLIVEIRA - Karthike EZHILARASAN - Alexandre KOSTAS
+# Classe: SRC1 - 3E
+# Projet - ClicMed
+
+import settings
 
 info = """
   Name            : Python Md5 Brute-force
