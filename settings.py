@@ -13,6 +13,8 @@ import user_frame
 import mysql.connector as mysql
 import hashlib
 import user_mgmt
+import logging
+import log
 
 
 # Settings global variables
