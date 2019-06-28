@@ -4,14 +4,6 @@
 
 import settings
 
-info = """
-  Name            : Python Md5 Brute-force
-  Created By      : Sefa Said Deniz
-  Blog            : sefasaiddeniz.com
-  Documentation   : https://github.com/sefasaid/python-md5-bruteforce/
-  License         : Completely Free
-  Thanks to       :  Agus Makmun (Summon Agus)-bloggersmart.net - python.web.id
-"""
 done = False
 def signal_handler(signal, frame):
     print('You pressed Ctrl+C!')
@@ -59,7 +51,6 @@ def _attack(chrs, inputt):
       print("\n[!]",n,"-character finished in %s seconds ---" % (time.time() - characterstart_time))
 
 def main():
-    print(info)
     
     inp_usr = input(" add md5\n")
     chrs = string.printable.replace(' \t\n\r\x0b\x0c', '')
