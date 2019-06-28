@@ -32,13 +32,10 @@ def main_frame(root_frame, region):
 
     cursor = cnx.cursor(buffered=True)
 
-    print(region)
-
-    if region == 0:
+    if region == 'None':
         cursor.execute("SELECT * FROM Users")
     else:
-        region = settings.re.search('(.*?)', region)
-        print(region)
+        region = region[2:-3]
         cursor.execute("SELECT * FROM Users WHERE Region = %s", (region, ))
 
     records = cursor.fetchall()
@@ -171,7 +168,7 @@ def user_del(user_id, root_frame):
     cnx.commit()
     cnx.close()
 
-    settings.user_mgmt.main_frame(root_frame)
+    settings.user_mgmt.main_frame(root_frame, 'None')
 
 
 def user_edit(user_id, label2, label3, label4,label5, label6):
@@ -189,6 +186,20 @@ def user_edit(user_id, label2, label3, label4,label5, label6):
                    "WHERE idusers = %s", (name_u, surname_u, email_u, region_u, groupid_u, user_id))
     cnx.commit()
     cnx.close()
+
+    popup = settings.tk.Toplevel()
+    popup.wm_title("Success!")
+    ico_popup = settings.tk.PhotoImage(file=settings.ICO)
+    popup.configure(background='#3c3f41')
+    popup.geometry('150x130')
+    popup.maxsize(150, 70)
+    popup.minsize(150, 70)
+    popup.tk.call('wm', 'iconphoto', popup._w, ico_popup)
+    label = settings.tk.Label(popup, text="Update Success !", font=("Arial", 11), fg='white', bg='#3c3f41')
+    label.pack(side="top", fill="x", pady=10)
+    okay_btn = settings.tk.Button(popup, text="Okay", command=popup.destroy)
+    okay_btn.pack()
+    popup.mainloop()
 
 
 def new_pass(user_id, email_user):
@@ -232,7 +243,7 @@ def user_add(label1, label2, label3, label4, label5, label6, root_frame):
     cnx.commit()
     cnx.close()
 
-    settings.user_mgmt.main_frame(root_frame)
+    settings.user_mgmt.main_frame(root_frame, 'None')
 
 
 def clear(label1, label2, label3, label4, label5, label6):
