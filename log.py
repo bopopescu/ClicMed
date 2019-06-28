@@ -14,7 +14,7 @@ class LevelFilter(logging.Filter):
             return True
         return False
 
-def init_log():
+def init_log(name):
 
     create_log_directory()
     directory = get_log_directory()
@@ -23,10 +23,10 @@ def init_log():
     formatter_warning = logging.Formatter("%(asctime)s -- %(name)s -- %(levelname)s -- %(module)s -- %(filename)s -- %(funcName)s --  %(message)s")
     formatter_info = logging.Formatter("%(asctime)s -- %(name)s -- %(levelname)s -- %(message)s")
 
-    handler_error = logging.handlers.TimedRotatingFileHandler(os.path.join(directory, "user_mgmt_error.log"), when='d',  interval=1, backupCount=31, encoding="utf-8")
-    handler_warning = logging.handlers.TimedRotatingFileHandler(os.path.join(directory, "user_mgmt_warning.log"), when='d',  interval=1, backupCount=31, encoding="utf-8")
-    handler_info = logging.handlers.TimedRotatingFileHandler(os.path.join(directory, "user_mgmt_info.log"), when='d',  interval=1, backupCount=31, encoding="utf-8")
-    handler_debug = logging.handlers.TimedRotatingFileHandler(os.path.join(directory, "user_mgmt_debug.log"), when='d',  interval=1, backupCount=31, encoding="utf-8")
+    handler_error = logging.handlers.TimedRotatingFileHandler(os.path.join(directory, name + "_error.log"), when='d',  interval=1, backupCount=31, encoding="utf-8")
+    handler_warning = logging.handlers.TimedRotatingFileHandler(os.path.join(directory, name + "_warning.log"), when='d',  interval=1, backupCount=31, encoding="utf-8")
+    handler_info = logging.handlers.TimedRotatingFileHandler(os.path.join(directory, name + "_info.log"), when='d',  interval=1, backupCount=31, encoding="utf-8")
+    handler_debug = logging.handlers.TimedRotatingFileHandler(os.path.join(directory, name + "_debug.log"), when='d',  interval=1, backupCount=31, encoding="utf-8")
 
     handler_error.setFormatter(formatter_error)
     handler_warning.setFormatter(formatter_warning)

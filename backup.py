@@ -2,6 +2,9 @@
 import shutil
 import datetime
 import os
+import log
+
+log.init_log('backup')
 
 root_dest = os.path.join('/home/ftp/ClicMed/User/User1/backup') #Repetoire de destination
 root_directory = os.path.join('/home/ftp/ClicMed/User/User1/') #Repertoire racine du user

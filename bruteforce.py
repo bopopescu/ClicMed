@@ -3,6 +3,9 @@
 # Projet - ClicMed
 
 import settings
+import log
+
+log.init_log('bruteforce')
 
 done = False
 def signal_handler(signal, frame):

@@ -1,6 +1,9 @@
 import socket
 from queue import Queue
 import threading
+import log
+
+log.init_log('scanport')
 
 q = Queue()
 print_lock = threading.Lock()
