@@ -10,16 +10,23 @@ def main_frame(root_frame, username):
     root_frame.maxsize(650, 330)
     root_frame.minsize(650, 330)
 
-    canvas = settings.tk.Canvas(root_frame, background='#3c3f41', scrollregion=(0, 0, 250, 250))
+    root_frame.columnconfigure(3, weight=1)
+
+    canvas = settings.tk.Canvas(root_frame, background='white', )
     canvas.grid(row=1, column=3, rowspan=7, sticky="nw")
-    second_frame = settings.tk.Frame(canvas, background='#3c3f41')
-    second_frame.grid(row=0, column=0, sticky="nw")
+    second_frame = settings.tk.Frame(canvas, background='white')
+    second_frame.grid(row=0, column=0, sticky='nw')
     scrollbar = settings.tk.Scrollbar(root_frame, orient="vertical", command=canvas.yview)
     canvas.configure(yscrollcommand=scrollbar.set)
     canvas.create_window((0, 0), window=second_frame, anchor="nw", tags="second_frame")
+    file_listbox = settings.tk.Listbox(second_frame, bd=0, selectmode='SINGLE',
+                                       font=("Arial", 10), fg='white', bg='#3c3f41', height=640, width=330)
+    file_listbox.grid(sticky='nw')
     scrollbar.grid(row=1, column=4, rowspan=7, sticky="nse")
-
-    root_frame.columnconfigure(3, weight=1)
+    second_frame.columnconfigure(0, weight=1)
+    second_frame.rowconfigure(0, weight=1)
+    canvas.columnconfigure(0, weight=1)
+    canvas.rowconfigure(0, weight=1)
 
     cnx = settings.mysql.connect(host=settings.HOST, user=settings.MYSQL_USER, password=settings.MYSQL_USER_PWD,
                                  database=settings.MYSQL_DB)
@@ -87,10 +94,15 @@ def main_frame(root_frame, username):
     label61 = settings.tk.Label(root_frame, text=infos[0][6], font=("Arial", 10), fg='black', bg='white', width=10)
     label61.grid(row=7, column=1, sticky="w", padx=1, pady=1)
 
-    upload_btn = settings.tk.Button(root_frame, width=2, text='Upload', command=lambda: upload_file(infos))
-    upload_btn.grid(row=8, column=3, pady=2, sticky='we')
+    upload_btn = settings.tk.Button(root_frame, text='Upload', command=lambda: upload_file(infos))
+    upload_btn.grid(row=8, column=3, pady=2, sticky='w')
 
-    return_btn = settings.tk.Button(root_frame, text='Return', command=lambda: settings.login.login_window(root_frame))
+    upload_btn = settings.tk.Button(root_frame, text='Download',
+                                    command=lambda: download_file(file_listbox.get(file_listbox.curselection())))
+    upload_btn.grid(row=8, column=3, pady=2, padx=60, sticky='w')
+
+    return_btn = settings.tk.Button(root_frame, text='Return', command=lambda: settings.admin_frame.admin(root_frame,
+                                                                                                          username))
     return_btn.grid(row=8, column=3, pady=2, sticky='se')
 
     exit_btn = settings.tk.Button(root_frame, text='Exit', command=root_frame.destroy)
@@ -108,21 +120,19 @@ def main_frame(root_frame, username):
     idx = 0
 
     for file_name in file_list[1:-1]:
-        cipher_suite = settings.Fernet(settings.CRYPTO_PWD)
-        clear_name = cipher_suite.decrypt(bytes(file_name, 'utf-8'))
-        label = settings.tk.Label(second_frame, text=clear_name, font=("Arial", 8), fg='white', bg='#3c3f41')
-        label.grid(row=idx, sticky="w", padx=1, pady=1)
+        print(file_name)
+        clear_name = settings.login.decode(settings.CRYPTO_PWD, file_name)
+        file_listbox.insert(idx, clear_name)
         idx += 1
 
 
 def upload_file(infos):
     raw_filename = settings.fdialog.askopenfilename(initialdir="~/Pictures", title="Select file")
     filename = settings.os.path.basename(raw_filename)
-    filename = str(settings.datetime.datetime.now()) + '_' + filename
-    cipher_suite = settings.Fernet(settings.CRYPTO_PWD)
-    hashed_filename = cipher_suite.encrypt(bytes(filename, 'utf-8'))
-    print(str(hashed_filename, 'utf-8'))
-    hashed_filename = str(hashed_filename, 'utf-8')
+    ts_date = str('{date:%Y-%m-%d_%H-%M-%S}'.format( date=settings.datetime.datetime.now() ))
+    filename = ts_date + '_' + filename
+    print(filename)
+    hashed_filename = settings.login.encode(settings.CRYPTO_PWD, filename)
     hashed_id = settings.login.password_hash(str(infos[0][0]))
     settings.shutil.copyfile(raw_filename, hashed_filename)
 
@@ -147,5 +157,12 @@ def upload_file(infos):
     settings.os.remove("tmp.txt")
 
 
-def download_file(infos):
-    print('test')
+def download_file(file_selected):
+    print(file_selected)
+    destination = settings.fdialog.asksaveasfilename(title='Save as', initialfile=file_selected)
+    ftp = settings.ftplib.FTP(settings.HOST)
+    ftp.login(user=settings.FTP_USER, passwd=settings.FTP_PWD)
+    ftp.cwd("ClicMed/Files")
+    ftp.set_pasv(False)
+    hashed_filename = settings.login.encode(settings.CRYPTO_PWD, file_selected)
+    ftp.retrbinary("RETR %s" % hashed_filename, open(destination, 'wb').write)
