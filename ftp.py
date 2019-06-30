@@ -19,7 +19,6 @@ def main_frame(root_frame, username):
     canvas.create_window((0, 0), window=second_frame, anchor="nw", tags="second_frame")
     scrollbar.grid(row=1, column=4, rowspan=7, sticky="nse")
 
-    # root_frame.rowconfigure(1, weight=1)
     root_frame.columnconfigure(3, weight=1)
 
     cnx = settings.mysql.connect(host=settings.HOST, user=settings.MYSQL_USER, password=settings.MYSQL_USER_PWD,
@@ -88,7 +87,7 @@ def main_frame(root_frame, username):
     label61 = settings.tk.Label(root_frame, text=infos[0][6], font=("Arial", 10), fg='black', bg='white', width=10)
     label61.grid(row=7, column=1, sticky="w", padx=1, pady=1)
 
-    upload_btn = settings.tk.Button(root_frame, width=2, text='Upload', command=lambda: upload_file())
+    upload_btn = settings.tk.Button(root_frame, width=2, text='Upload', command=lambda: upload_file(infos))
     upload_btn.grid(row=8, column=3, pady=2, sticky='we')
 
     return_btn = settings.tk.Button(root_frame, text='Return', command=lambda: settings.login.login_window(root_frame))
@@ -97,34 +96,56 @@ def main_frame(root_frame, username):
     exit_btn = settings.tk.Button(root_frame, text='Exit', command=root_frame.destroy)
     exit_btn.grid(row=8, column=4, pady=2, sticky='sw')
 
-    def upload_file():
-        raw_filename = settings.fdialog.askopenfilename(initialdir="/", title="Select file")
-        ftp = settings.ftplib.FTP(settings.HOST)
-        ftp.login(user=settings.FTP_USER, passwd=settings.FTP_PWD)
-        ftp.cwd("ClicMed/Files")
-        ftp.set_pasv(False)
-        print(ftp.pwd())
-        file_name = raw_filename
-        file = open(file_name, 'rb')
-        ftp.storbinary('STOR ' + file_name, file)
-        file.quit()
+    ftp = settings.ftplib.FTP(settings.HOST)
+    ftp.login(user=settings.FTP_USER, passwd=settings.FTP_PWD)
+    ftp.cwd("ClicMed/Patients")
+    ftp.set_pasv(False)
+    r = settings.io.BytesIO()
+    hashed_id = settings.login.password_hash(str(infos[0][0]))
+    ftp.retrbinary('RETR %s' % hashed_id, r.write)
+    file_list = str(r.getvalue(), "utf-8")
+    file_list = file_list.split('\n')
+    idx = 0
 
-    # def upload_file_to_FTP():
-    #     ##    first thing we do is connect to the ftp host
-    #
-    #     command = 'echo'
-    #
-    #     client = settings.paramiko.SSHClient()
-    #     client.load_system_host_keys()
-    #     client.set_missing_host_key_policy(settings.paramiko.WarningPolicy)
-    #
-    #     client.connect(settings.HOST, port=settings.SSH_PORT, username=settings.SSH_USER, password=settings.SSH_PWD)
-    #
-    #     stdin, stdout, stderr = client.exec_command(command)
-    #     ftp = FTP('')
-    #     ftp.login(user='', passwd='')
-    #     ftp.cwd("")
-    #     ftp.set_pasv(False)
-    #     file_name = self.raw_filename
-    #     file = open(file_name, 'rb')
-    #     ftp.storbinary('STOR ' + file_name, file)
+    for file_name in file_list[1:-1]:
+        cipher_suite = settings.Fernet(settings.CRYPTO_PWD)
+        clear_name = cipher_suite.decrypt(bytes(file_name, 'utf-8'))
+        label = settings.tk.Label(second_frame, text=clear_name, font=("Arial", 8), fg='white', bg='#3c3f41')
+        label.grid(row=idx, sticky="w", padx=1, pady=1)
+        idx += 1
+
+
+def upload_file(infos):
+    raw_filename = settings.fdialog.askopenfilename(initialdir="~/Pictures", title="Select file")
+    filename = settings.os.path.basename(raw_filename)
+    filename = str(settings.datetime.datetime.now()) + '_' + filename
+    cipher_suite = settings.Fernet(settings.CRYPTO_PWD)
+    hashed_filename = cipher_suite.encrypt(bytes(filename, 'utf-8'))
+    print(str(hashed_filename, 'utf-8'))
+    hashed_filename = str(hashed_filename, 'utf-8')
+    hashed_id = settings.login.password_hash(str(infos[0][0]))
+    settings.shutil.copyfile(raw_filename, hashed_filename)
+
+    ftp = settings.ftplib.FTP(settings.HOST)
+    ftp.login(user=settings.FTP_USER, passwd=settings.FTP_PWD)
+    ftp.cwd("ClicMed/Files")
+    ftp.set_pasv(False)
+
+    file = open(hashed_filename, 'rb')
+    ftp.storbinary('STOR %s' % hashed_filename, file)
+    file.close()
+    settings.os.remove(hashed_filename)
+
+    ftp.cwd("../Patients")
+    tmp = open("tmp.txt", "w+")
+    tmp.write(str(hashed_filename) + "\n")
+    tmp.close()
+    tmp = open("tmp.txt", 'rb')
+    ftp.storbinary('APPE %s' % hashed_id, tmp)
+    tmp.close()
+    ftp.close()
+    settings.os.remove("tmp.txt")
+
+
+def download_file(infos):
+    print('test')

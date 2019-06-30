@@ -182,6 +182,13 @@ def user_del(user_id, root_frame, username_set):
     cnx.commit()
     cnx.close()
 
+    ftp = settings.ftplib.FTP(settings.HOST)
+    ftp.login(user=settings.FTP_USER, passwd=settings.FTP_PWD)
+    ftp.cwd("ClicMed/Patients")
+    ftp.set_pasv(False)
+    hashed_id = settings.login.password_hash(str(user_id))
+    ftp.delete(hashed_id)
+
     settings.user_mgmt.main_frame(root_frame, username_set, 'None')
 
 
@@ -256,7 +263,23 @@ def user_add(label1, label2, label3, label4, label5, label6, root_frame, usernam
                    " VALUES (%s,%s,%s,%s,%s,%s,%s)", (username_u, name_u, surname_u, email_u, region_u, groupid_u,
                                                       hashed_password))
     cnx.commit()
+    cursor.close()
+
+    cursor = cnx.cursor(buffered=True)
+    cursor.execute("SELECT idusers FROM Users WHERE username = %s", (username_u, ))
+    id_user = cursor.fetchone()
+    cursor.close()
     cnx.close()
+
+    ftp = settings.ftplib.FTP(settings.HOST)
+    ftp.login(user=settings.FTP_USER, passwd=settings.FTP_PWD)
+    ftp.cwd("ClicMed/Patients")
+    ftp.set_pasv(False)
+
+    hashed_id = settings.login.password_hash(str(id_user[0]))
+    header = bytes("User created : " + str(settings.datetime.datetime.now()) + "\n", "UTF-8")
+    bheader = settings.io.BytesIO(header)
+    ftp.storbinary('STOR %s' % hashed_id, bheader)
 
     settings.user_mgmt.main_frame(root_frame, username_set, 'None')
 

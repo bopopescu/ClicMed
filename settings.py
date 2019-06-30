@@ -1,13 +1,15 @@
 import os
 import sys
 import tkinter as tk
+from cryptography.fernet import Fernet
+import io
+import re
 import ftplib
 import tkinter.filedialog as fdialog
 import ftp
 import threading
 import itertools
 import signal
-import re
 import ssl
 import time
 import smtplib
@@ -24,7 +26,7 @@ import log
 import shutil
 import datetime
 import paramiko
-
+import cryptography
 
 # Settings global variables
 HOST = 'benjamin.beyerle.fr'
@@ -40,6 +42,8 @@ SSH_PORT = 22
 
 FTP_USER = 'ClicMed-user'
 FTP_PWD = 'clicmedUs3r'
+
+CRYPTO_PWD = b'kR34n7BdDsmWcSeuyTXCmPbHCrP2BRb4rosPdZAfuS0='
 
 
 ICO = os.path.join(sys.path[0], "Resources/ClicMed.gif")
