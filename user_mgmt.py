@@ -73,7 +73,8 @@ def main_frame(root_frame, region):
     label3 = settings.tk.Label(second_frame, text='Surname', font=("Arial", 10), fg='black', bg='white', width=10)
     label3.grid(row=1, column=6, sticky="w", padx=1, pady=1)
 
-    label4 = settings.tk.Label(second_frame, text='Email address', font=("Arial", 10), fg='black', bg='white',  width=30)
+    label4 = settings.tk.Label(second_frame, text='Email address', font=("Arial", 10), fg='black', bg='white',
+                               width=30)
     label4.grid(row=1, column=7, sticky="w", padx=1, pady=1)
 
     label5 = settings.tk.Label(second_frame, text='Pays', font=("Arial", 10), fg='black', bg='white', width=10)
@@ -89,11 +90,11 @@ def main_frame(root_frame, region):
         edit_btn.grid(row=idx, column=0, sticky="w", padx=1, pady=1)
 
         del_btn = settings.tk.Button(second_frame, text='Delete', command=lambda user_id=row[0]: user_del(user_id,
-                                                                                                        root_frame))
+                                                                                                          root_frame))
         del_btn.grid(row=idx, column=1, sticky="w", padx=1, pady=1)
 
-        pass_btn = settings.tk.Button(second_frame, text='New Password', command=lambda user_id=row[0], email_usser=row[4]
-                                      : new_pass(user_id, email_usser))
+        pass_btn = settings.tk.Button(second_frame, text='New Password', command=lambda user_id=row[0],
+                                      email_usser=row[4]: new_pass(user_id, email_usser))
         pass_btn.grid(row=idx, column=2, sticky="w", padx=1, pady=1)
 
         label0 = settings.tk.Label(second_frame, text=row[0], font=("Arial", 10), fg='black', bg='grey', width=2)
@@ -122,18 +123,20 @@ def main_frame(root_frame, region):
         label6.insert(0, row[6])
         label6.grid(row=idx, column=9, sticky="w", padx=1, pady=1)
 
-        edit_btn['command'] = lambda user_id=row[0], lname=label2, lsurname=label3, lemail=label4, lregion=label5, lgroup=label6: user_edit(user_id, lname, lsurname, lemail, lregion, lgroup)
+        edit_btn['command'] = lambda user_id=row[0], lname=label2, lsurname=label3, lemail=label4, lregion=label5, \
+                                     lgroup=label6: user_edit(user_id, lname, lsurname, lemail, lregion, lgroup)
 
     idx += 1
     add_btn = settings.tk.Button(second_frame, text='Add', command=lambda: user_add(label1, label2, label3, label4,
-                                                                                  label5, label6, root_frame))
+                                                                                    label5, label6, root_frame))
     add_btn.grid(row=idx, column=1, sticky="w", padx=1, pady=1)
 
     clear_btn = settings.tk.Button(second_frame, text='Clear', command=lambda: clear(label1, label2, label3, label4,
-                                                                                   label5, label6))
+                                                                                     label5, label6))
     clear_btn.grid(row=idx, column=2, sticky="w", padx=1, pady=1)
 
-    label1 = settings.tk.Entry(second_frame, textvariable=username, font=("Arial", 11), fg='black', bg='white', width=10)
+    label1 = settings.tk.Entry(second_frame, textvariable=username, font=("Arial", 11), fg='black', bg='white',
+                               width=10)
     label1.grid(row=idx, column=4, sticky="w", padx=1, pady=1)
 
     label2 = settings.tk.Entry(second_frame, textvariable=name, font=("Arial", 11), fg='black', bg='white', width=10)
@@ -194,6 +197,7 @@ def user_edit(user_id, label2, label3, label4,label5, label6):
     popup.geometry('150x130')
     popup.maxsize(150, 70)
     popup.minsize(150, 70)
+    popup.grab_set()
     popup.tk.call('wm', 'iconphoto', popup._w, ico_popup)
     label = settings.tk.Label(popup, text="Update Success !", font=("Arial", 11), fg='white', bg='#3c3f41')
     label.pack(side="top", fill="x", pady=10)
