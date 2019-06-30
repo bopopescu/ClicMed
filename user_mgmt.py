@@ -1,7 +1,9 @@
 import settings
 
 
-def main_frame(root_frame, region):
+# ---------------------------------------------------------------------------------------------------------------------
+# Admin Frame
+def main_frame(root_frame, username_set, region):
     settings.login.clear_window(root_frame)
     root_frame.configure(background='#3c3f41')
     root_frame.title('User Management')
@@ -43,13 +45,15 @@ def main_frame(root_frame, region):
     cnx.close()
     idx = 1
 
+    filter1_choice = settings.tk.StringVar(root_frame)
+    filter1_choice.set(region)
     username = settings.tk.StringVar()
     name = settings.tk.StringVar()
     surname = settings.tk.StringVar()
     email = settings.tk.StringVar()
     region = settings.tk.StringVar()
     groupid = settings.tk.StringVar()
-    filter1_choice = settings.tk.StringVar(root_frame)
+
 
     filter1 = settings.tk.Label(root_frame, text='Filter on:', font=("Arial", 10), fg='white', bg='#3c3f41')
     filter1.grid(row=0, column=0, sticky="w")
@@ -57,7 +61,7 @@ def main_frame(root_frame, region):
     dropdown1 = settings.tk.OptionMenu(root_frame, filter1_choice, *region_list)
     dropdown1.grid(row=0, column=1, sticky="w")
 
-    filtr_btn = settings.tk.Button(root_frame, text="Apply", command=lambda: main_frame(root_frame,
+    filtr_btn = settings.tk.Button(root_frame, text="Apply", command=lambda: main_frame(root_frame, username_set,
                                                                                         filter1_choice.get()))
     filtr_btn.grid(row=0, column=2, sticky="w")
 
@@ -77,7 +81,7 @@ def main_frame(root_frame, region):
                                width=30)
     label4.grid(row=1, column=7, sticky="w", padx=1, pady=1)
 
-    label5 = settings.tk.Label(second_frame, text='Pays', font=("Arial", 10), fg='black', bg='white', width=10)
+    label5 = settings.tk.Label(second_frame, text='Country', font=("Arial", 10), fg='black', bg='white', width=10)
     label5.grid(row=1, column=8, sticky="w", padx=1, pady=1)
 
     label6 = settings.tk.Label(second_frame, text='Group', font=("Arial", 10), fg='black', bg='white', width=10)
@@ -90,7 +94,8 @@ def main_frame(root_frame, region):
         edit_btn.grid(row=idx, column=0, sticky="w", padx=1, pady=1)
 
         del_btn = settings.tk.Button(second_frame, text='Delete', command=lambda user_id=row[0]: user_del(user_id,
-                                                                                                          root_frame))
+                                                                                                          root_frame,
+                                                                                                          username_set))
         del_btn.grid(row=idx, column=1, sticky="w", padx=1, pady=1)
 
         pass_btn = settings.tk.Button(second_frame, text='New Password', command=lambda user_id=row[0],
@@ -128,7 +133,8 @@ def main_frame(root_frame, region):
 
     idx += 1
     add_btn = settings.tk.Button(second_frame, text='Add', command=lambda: user_add(label1, label2, label3, label4,
-                                                                                    label5, label6, root_frame))
+                                                                                    label5, label6, root_frame,
+                                                                                    username_set))
     add_btn.grid(row=idx, column=1, sticky="w", padx=1, pady=1)
 
     clear_btn = settings.tk.Button(second_frame, text='Clear', command=lambda: clear(label1, label2, label3, label4,
@@ -154,14 +160,19 @@ def main_frame(root_frame, region):
     label6 = settings.tk.Entry(second_frame, textvariable=groupid, font=("Arial", 11), fg='black', bg='white', width=10)
     label6.grid(row=idx, column=9, sticky="w", padx=1, pady=1)
 
-    return_btn = settings.tk.Button(root_frame, text='Return', command=lambda: settings.admin_frame.admin(root_frame))
+    return_btn = settings.tk.Button(root_frame, text='Return', command=lambda: settings.admin_frame.admin(root_frame,
+                                                                                                          username_set))
     return_btn.grid(row=2, column=3, sticky="e")
 
     exit_btn = settings.tk.Button(root_frame, text='Exit', command=root_frame.destroy)
     exit_btn.grid(row=2, column=4, sticky="w")
 
 
-def user_del(user_id, root_frame):
+# ----------------------------------------------------------------------------------------------------------------------
+# User Frame
+
+
+def user_del(user_id, root_frame, username_set):
 
     cnx = settings.mysql.connect(host=settings.HOST, user=settings.MYSQL_ADMIN, password=settings.MYSQL_ADMIN_PWD,
                                  database=settings.MYSQL_DB)
@@ -171,7 +182,7 @@ def user_del(user_id, root_frame):
     cnx.commit()
     cnx.close()
 
-    settings.user_mgmt.main_frame(root_frame, 'None')
+    settings.user_mgmt.main_frame(root_frame, username_set, 'None')
 
 
 def user_edit(user_id, label2, label3, label4,label5, label6):
@@ -222,7 +233,7 @@ def new_pass(user_id, email_user):
     cnx.close()
 
 
-def user_add(label1, label2, label3, label4, label5, label6, root_frame):
+def user_add(label1, label2, label3, label4, label5, label6, root_frame, username_set):
 
     cnx = settings.mysql.connect(host=settings.HOST, user=settings.MYSQL_ADMIN, password=settings.MYSQL_ADMIN_PWD,
                                  database=settings.MYSQL_DB)
@@ -247,7 +258,7 @@ def user_add(label1, label2, label3, label4, label5, label6, root_frame):
     cnx.commit()
     cnx.close()
 
-    settings.user_mgmt.main_frame(root_frame, 'None')
+    settings.user_mgmt.main_frame(root_frame, username_set, 'None')
 
 
 def clear(label1, label2, label3, label4, label5, label6):

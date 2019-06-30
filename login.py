@@ -11,11 +11,19 @@ def password_hash(password_input):
 def clear_window(root_frame):
     for widget in root_frame.winfo_children():
         widget.destroy()
+    column, row = root_frame.grid_size()
+
+    for i in range(0, row):
+        root_frame.rowconfigure(i, weight=0)
+
+    for i in range(0, column):
+        root_frame.columnconfigure(i, weight=0)
 
 
 # Window for log in
 def login_window(root_frame):
 
+    settings.login.clear_window(root_frame)
     root_frame.configure(background='#3c3f41')
     root_frame.title('Clic Med')
     root_frame.geometry('250x130')
@@ -69,9 +77,9 @@ def check_user(username, password_input, password_label, root_frame):
         password_label.delete(0, settings.tk.END)
     else:
         if group_id == 0:
-            settings.admin_frame.admin(root_frame)
+            settings.admin_frame.admin(root_frame, username)
         else:
-            settings.user_frame.user(root_frame)
+            settings.user_frame.user(root_frame, username)
 
 
 
