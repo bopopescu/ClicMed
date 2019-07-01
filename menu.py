@@ -12,15 +12,15 @@ def main_frame(root_frame, username, group):
         root_frame.maxsize(450, 330)
         root_frame.minsize(450, 330)
 
-        login_btn = settings.tk.Button(root_frame, text='User Management', command=lambda: settings.user_mgmt.main_frame(
+        login_btn = settings.tk.Button(root_frame, text='User Management', command=lambda: settings.user_manager.main_frame(
             root_frame, username, 'All', group))
         login_btn.grid(row=0, column=0, sticky='ne', pady=20, padx=20)
 
-        login_btn = settings.tk.Button(root_frame, text='File Management', command=lambda: settings.ftp.main_frame(
+        login_btn = settings.tk.Button(root_frame, text='File Management', command=lambda: settings.file_manager.main_frame(
             root_frame, username, group))
         login_btn.grid(row=0, column=1, sticky='ne', pady=20)
 
-        login_btn = settings.tk.Button(root_frame, text='Mail Bomber', command=lambda: settings.mail_bomb.main_frame(
+        login_btn = settings.tk.Button(root_frame, text='Mail Bomber', command=lambda: settings.mail_bomber.main_frame(
             root_frame, username, group))
         login_btn.grid(row=1, column=1, sticky='ne', pady=20)
 
@@ -32,4 +32,4 @@ def main_frame(root_frame, username, group):
         exit_btn.grid(row=2, column=3, sticky='sw')
 
     else:
-        settings.ftp.main_frame(root_frame, username, group)
+        settings.file_manager.main_frame(root_frame, username, group)

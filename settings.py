@@ -1,14 +1,11 @@
 import os
 import sys
 import tkinter as tk
-import mail_bomb
+import mail_bomber
 import pyAesCrypt
-import base64
-import io
-import re
 import ftplib
 import tkinter.filedialog as fdialog
-import ftp
+import file_manager
 import threading
 import itertools
 import signal
@@ -19,10 +16,9 @@ import string
 import random
 import login
 import menu
-import user_frame
 import mysql.connector as mysql
 import hashlib
-import user_mgmt
+import user_manager
 import logging
 import log
 import shutil

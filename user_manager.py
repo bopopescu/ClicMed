@@ -187,7 +187,7 @@ def user_del(user_id, root_frame, username_set, country, group):
     hashed_id = settings.login.password_hash(str(user_id))
     ftp.delete(hashed_id)
 
-    settings.user_mgmt.main_frame(root_frame, username_set, country, group)
+    settings.user_manager.main_frame(root_frame, username_set, country, group)
 
 
 def user_edit(user_id, label2, label3, label4,label5, label6):
@@ -301,7 +301,7 @@ def user_add(label1, label2, label3, label4, label5, label6, root_frame, usernam
     ftp.close()
     settings.os.remove(hashed_id)
 
-    settings.user_mgmt.main_frame(root_frame, username_set, country, group)
+    settings.user_manager.main_frame(root_frame, username_set, country, group)
 
 
 def clear(label1, label2, label3, label4, label5, label6):
