@@ -63,8 +63,9 @@ def main_frame(root_frame, username_set, country, group):
     dropdown1 = settings.tk.OptionMenu(root_frame, filter1_choice, *region_list)
     dropdown1.grid(row=0, column=1, sticky="w")
 
-    filtr_btn = settings.tk.Button(root_frame, text="Apply", command=lambda: main_frame(root_frame, username_set,
-                                                                                        filter1_choice.get()[2:-3]))
+    filtr_btn = settings.tk.Button(root_frame, text="Apply",
+                                   command=lambda: main_frame(root_frame, username_set,
+                                                              filter1_choice.get()[2:-3], group))
     filtr_btn.grid(row=0, column=2, sticky="w")
 
     label0 = settings.tk.Label(second_frame, text='Id', font=("Arial", 10), fg='black', bg='white', width=2)
@@ -101,7 +102,7 @@ def main_frame(root_frame, username_set, country, group):
         del_btn.grid(row=idx, column=1, sticky="w", padx=1, pady=1)
 
         pass_btn = settings.tk.Button(second_frame, text='New Password', command=lambda user_id=row[0],
-                                      email_usser=row[4]: new_pass(user_id, email_usser))
+                                      email_user=row[4]: new_pass(user_id, email_user))
         pass_btn.grid(row=idx, column=2, sticky="w", padx=1, pady=1)
 
         label0 = settings.tk.Label(second_frame, text=row[0], font=("Arial", 10), fg='black', bg='grey', width=2)
@@ -183,14 +184,14 @@ def user_del(user_id, root_frame, username_set, country, group):
     ftp = settings.ftplib.FTP(settings.HOST)
     ftp.login(user=settings.FTP_USER, passwd=settings.FTP_PWD)
     ftp.cwd("ClicMed/Patients")
-    ftp.set_pasv(False)
+    ftp.set_pasv(True)
     hashed_id = settings.login.password_hash(str(user_id))
     ftp.delete(hashed_id)
 
     settings.user_manager.main_frame(root_frame, username_set, country, group)
 
 
-def user_edit(user_id, label2, label3, label4,label5, label6):
+def user_edit(user_id, label2, label3, label4, label5, label6):
     name_u = label2.get()
     surname_u = label3.get()
     email_u = label4.get()
@@ -287,7 +288,7 @@ def user_add(label1, label2, label3, label4, label5, label6, root_frame, usernam
     ftp = settings.ftplib.FTP(settings.HOST)
     ftp.login(user=settings.FTP_USER, passwd=settings.FTP_PWD)
     ftp.cwd("ClicMed/Patients")
-    ftp.set_pasv(False)
+    ftp.set_pasv(True)
 
     hashed_id = settings.login.password_hash(str(id_user[0]))
     timestamp = "User created : " + str(settings.datetime.datetime.now()) + "\n"

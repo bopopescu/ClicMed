@@ -2,6 +2,7 @@ import os
 import sys
 import tkinter as tk
 import mail_bomber
+import base64
 import pyAesCrypt
 import ftplib
 import tkinter.filedialog as fdialog

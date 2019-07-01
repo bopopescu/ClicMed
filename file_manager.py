@@ -117,7 +117,7 @@ def main_frame(root_frame, username, group):
     ftp = settings.ftplib.FTP(settings.HOST)
     ftp.login(user=settings.FTP_USER, passwd=settings.FTP_PWD)
     ftp.cwd("ClicMed/Patients")
-    ftp.set_pasv(False)
+    ftp.set_pasv(True)
     hashed_id = settings.login.password_hash(str(infos[0][0]))
     ftp.retrbinary('RETR %s' % hashed_id, open("tmp.txt", 'wb').write)
     settings.login.decrypt("tmp.txt")
@@ -145,7 +145,7 @@ def upload_file(infos, root_frame, username):
     ftp = settings.ftplib.FTP(settings.HOST)
     ftp.login(user=settings.FTP_USER, passwd=settings.FTP_PWD)
     ftp.cwd("ClicMed/Files")
-    ftp.set_pasv(False)
+    ftp.set_pasv(True)
 
     file = open(hashed_filename, 'rb')
     ftp.storbinary('STOR %s' % hashed_filename, file)
@@ -164,7 +164,7 @@ def upload_file(infos, root_frame, username):
     file.close()
     settings.os.remove("tmp.txt")
     ftp.close()
-    main_frame(root_frame, username)
+    main_frame(root_frame, username, group)
 
 
 def download_file(file_selected):
