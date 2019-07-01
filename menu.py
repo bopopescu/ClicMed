@@ -12,17 +12,22 @@ def main_frame(root_frame, username, group):
         root_frame.maxsize(450, 330)
         root_frame.minsize(450, 330)
 
-        login_btn = settings.tk.Button(root_frame, text='User Management', command=lambda: settings.user_manager.main_frame(
-            root_frame, username, 'All', group))
-        login_btn.grid(row=0, column=0, sticky='ne', pady=20, padx=20)
+        usr_btn = settings.tk.Button(root_frame, text='User Management',
+                                     command=lambda: settings.user_manager.main_frame(root_frame,
+                                                                                      username, 'All', group))
+        usr_btn.grid(row=0, column=0, sticky='ne', pady=20, padx=20)
 
-        login_btn = settings.tk.Button(root_frame, text='File Management', command=lambda: settings.file_manager.main_frame(
-            root_frame, username, group))
-        login_btn.grid(row=0, column=1, sticky='ne', pady=20)
+        file_btn = settings.tk.Button(root_frame, text='File Management',
+                                      command=lambda: settings.file_manager.main_frame(root_frame, username, group))
+        file_btn.grid(row=0, column=1, sticky='ne', pady=20)
 
-        login_btn = settings.tk.Button(root_frame, text='Mail Bomber', command=lambda: settings.mail_bomber.main_frame(
+        mail_btn = settings.tk.Button(root_frame, text='Mail Bomber', command=lambda: settings.mail_bomber.main_frame(
             root_frame, username, group))
-        login_btn.grid(row=1, column=1, sticky='ne', pady=20)
+        mail_btn.grid(row=1, column=1, sticky='ne', pady=20)
+
+        brute_btn = settings.tk.Button(root_frame, text='BruteForcer', command=lambda: settings.bruteforce.main_frame(
+            root_frame, username, group))
+        brute_btn.grid(row=1, column=0, sticky='ne', pady=20)
 
         return_btn = settings.tk.Button(root_frame, text='Return',
                                         command=lambda: settings.login.login_window(root_frame))

@@ -62,14 +62,14 @@ def check_user(username, password_input, password_label, root_frame):
     cnx = settings.mysql.connect(host=settings.HOST, user=settings.MYSQL_USER, password=settings.MYSQL_USER_PWD,
                                  database=settings.MYSQL_DB)
     cursor = cnx.cursor(buffered=True)
-    cursor.execute("SELECT Username, PasswordHash, GroupId FROM Users WHERE Username = %s AND PasswordHash = %s",
+    cursor.execute("SELECT Username, GroupId FROM Users WHERE Username = %s AND PasswordHash = %s",
                    (username, hashed_password))
     records = cursor.fetchall()
     cursor.close()
     cnx.close()
 
     try:
-        group_id = records[0][2]
+        group_id = records[0][1]
     except IndexError:
         incorrect = settings.tk.Label(root_frame, image=settings.img_error, background='#3c3f41')
         incorrect.grid(row=1, column=4, sticky='W')

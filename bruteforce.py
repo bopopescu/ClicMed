@@ -5,67 +5,59 @@
 import settings
 
 
-settings.log.init_log('bruteforce')
+def main_frame(root_frame, username, group):
+    settings.login.clear_window(root_frame)
+    root_frame.configure(background='#3c3f41')
 
-done = False
+    root_frame.title('Bruteforcer')
+    root_frame.geometry('290x290')
+    root_frame.maxsize(290, 290)
+    root_frame.minsize(290, 290)
+
+    cnx = settings.mysql.connect(host=settings.HOST, user=settings.MYSQL_USER, password=settings.MYSQL_USER_PWD,
+                                 database=settings.MYSQL_DB)
+    cursor = cnx.cursor(buffered=True)
+    cursor.execute("SELECT DISTINCT Username FROM Users")
+    username_list = list(cursor.fetchall())
+    cursor.close()
+
+    filter1_choice = settings.tk.StringVar(root_frame)
+    filter1_choice.set(username)
+
+    filter1 = settings.tk.Label(root_frame, text='Select user : ', font=("Arial", 10), fg='white', bg='#3c3f41')
+    filter1.grid(row=0, column=0, pady=2, sticky="w")
+
+    dropdown1 = settings.tk.OptionMenu(root_frame, filter1_choice, *username_list)
+    dropdown1.grid(row=0, column=1, pady=2, sticky="w")
+    dropdown1.config(borderwidth=0)
+
+    filtr_btn = settings.tk.Button(root_frame, text="Apply",
+                                   command=lambda: bruteforcer(filter1_choice.get()[2:-3], username, group))
+    filtr_btn.grid(row=0, column=1, pady=2, sticky="w", padx=100)
 
 
-def signal_handler(signal, frame):
-    print('You pressed Ctrl+C!')
-    global done
-    done = True
-    settings.sys.exit(0)
+def bruteforcer(username_target, username, group):
 
+    found = False
 
-def animate():
-    for c in settings.itertools.cycle(['|', '/', '-', '\\']):
-        if done is True:
+    available_char = settings.string.ascii_letters + settings.string.digits
+    cnx = settings.mysql.connect(host=settings.HOST, user=settings.MYSQL_USER, password=settings.MYSQL_USER_PWD,
+                                 database=settings.MYSQL_DB)
+    cursor = cnx.cursor(buffered=True)
+    cursor.execute("SELECT PasswordHash FROM Users WHERE Username = %s", (username_target, ))
+    hashed_user_password = str(cursor.fetchall()[0])[2:-3]
+    cursor.close()
+    cnx.close()
+
+    for length in range(8, 9):
+        password_to_attempt = settings.itertools.product(available_char, repeat=length)
+
+        for attempt in password_to_attempt:
+            attempt = ''.join(attempt)
+            hashed_attempt = settings.login.password_hash(attempt)
+            if hashed_attempt == hashed_user_password:
+                found = True
+                break
+
+        if found:
             break
-
-        settings.sys.stdout.write('\rloading ' + c)
-        settings.sys.stdout.flush()
-        settings.time.sleep(0.1)
-
-
-def _attack(chrs, inputt):
-    print("[+] Start Time: ", settings.time.strftime('%H:%M:%S'))
-    start_time = settings.time.time()
-    t = settings.threading.Thread(target=animate)
-    t.start()
-    total_pass_try=0
-    for n in range(1, 31+1):
-        characterstart_time = settings.time.time()
-        print("\n[!] I'm at ", n , "-character")
-      
-        for xs in settings.itertools.product(chrs, repeat=n):
-            saved = ''.join(xs)
-            stringg = saved
-            m = settings.hashlib.md5()
-            m.update(bytes(saved, encoding='utf-8'))
-            total_pass_try +=1
-            if m.hexdigest() == inputt:
-                settings.time.sleep(10)
-                global done
-                done = True
-
-                print("\n[!] found ", stringg)
-                print("\n[-] End Time: ", settings.time.strftime('%H:%M:%S'))
-                print("\n[-] Total Keyword attempted: ", total_pass_try)
-                print("\n---Md5 cracked at %s seconds ---" % (settings.time.time() - start_time))
-                settings.sys.exit("Thank You !")
-        
-        print("\n[!]",n,"-character finished in %s seconds ---" % (settings.time.time() - characterstart_time))
-
-
-def main():
-    
-    inp_usr = input(" add md5\n")
-    chrs = settings.string.printable.replace(' \t\n\r\x0b\x0c', '')
-    print(chrs)
-    settings.signal.signal(settings.signal.SIGINT, signal_handler)
-    return _attack(chrs, inp_usr)
-
-
-if __name__ == "__main__":
-    main()
-

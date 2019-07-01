@@ -35,13 +35,13 @@ def main_frame(root_frame, username, group):
     label31 = settings.tk.Entry(root_frame, textvariable=nb_mail, font=("Arial", 11), fg='black', bg='white', width=5)
     label31.grid(row=2, column=1, pady=2, sticky='w')
 
+    progress_bar = settings.ttk.Progressbar(root_frame, orient='horizontal', length=165)
+    progress_bar.grid(row=3, column=1, sticky='w', pady=2)
+
     attack_btn = settings.tk.Button(root_frame, text='Send!',
                                     command=lambda: bomb_loop(label11.get(), label31.get(),
                                                               label21.get("1.0", 'end-1c'), progress_bar))
     attack_btn.grid(row=2, column=1, sticky="w", padx=50)
-
-    progress_bar = settings.ttk.Progressbar(root_frame, orient='horizontal', length=165)
-    progress_bar.grid(row=3, column=1, sticky='w', pady=2)
 
     return_btn = settings.tk.Button(root_frame, text='Return',
                                     command=lambda: settings.menu.main_frame(root_frame, username, group))
