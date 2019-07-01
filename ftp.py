@@ -1,11 +1,11 @@
 import settings
 
 
-def main_frame(root_frame, username):
+def main_frame(root_frame, username, group):
 
     settings.login.clear_window(root_frame)
     root_frame.configure(background='#3c3f41')
-    root_frame.title('Clic Med Admin')
+    root_frame.title('File Manager')
     root_frame.geometry('450x330')
     root_frame.maxsize(650, 330)
     root_frame.minsize(650, 330)
@@ -42,19 +42,20 @@ def main_frame(root_frame, username):
 
     cnx.close()
 
-    filter1_choice = settings.tk.StringVar(root_frame)
-    filter1_choice.set(username)
+    if group == 0:
+        filter1_choice = settings.tk.StringVar(root_frame)
+        filter1_choice.set(username)
 
-    filter1 = settings.tk.Label(root_frame, text='Filter on:', font=("Arial", 10), fg='white', bg='#3c3f41')
-    filter1.grid(row=0, column=0, pady=2, sticky="w")
+        filter1 = settings.tk.Label(root_frame, text='Select user:', font=("Arial", 10), fg='white', bg='#3c3f41')
+        filter1.grid(row=0, column=0, pady=2, sticky="w")
 
-    dropdown1 = settings.tk.OptionMenu(root_frame, filter1_choice, *username_list)
-    dropdown1.grid(row=0, column=1, pady=2, sticky="w")
-    dropdown1.config(borderwidth=0)
+        dropdown1 = settings.tk.OptionMenu(root_frame, filter1_choice, *username_list)
+        dropdown1.grid(row=0, column=1, pady=2, sticky="w")
+        dropdown1.config(borderwidth=0)
 
-    filtr_btn = settings.tk.Button(root_frame, text="Apply", command=lambda: main_frame(root_frame,
-                                                                                        filter1_choice.get()[2:-3]))
-    filtr_btn.grid(row=0, column=1, pady=2, sticky="w", padx=100)
+        filtr_btn = settings.tk.Button(root_frame, text="Apply",
+                                       command=lambda: main_frame(root_frame, filter1_choice.get()[2:-3], group))
+        filtr_btn.grid(row=0, column=1, pady=2, sticky="w", padx=100)
 
     labelFile = settings.tk.Label(root_frame, text='File :', font=("Arial", 10), fg='white', bg='#3c3f41')
     labelFile.grid(row=0, column=3, pady=2, sticky="w")
@@ -94,16 +95,21 @@ def main_frame(root_frame, username):
     label61 = settings.tk.Label(root_frame, text=infos[0][6], font=("Arial", 10), fg='black', bg='white', width=10)
     label61.grid(row=7, column=1, sticky="w", padx=1, pady=1)
 
-    upload_btn = settings.tk.Button(root_frame, text='Upload', command=lambda: upload_file(infos))
+    upload_btn = settings.tk.Button(root_frame, text='Upload', command=lambda: upload_file(infos, root_frame, username))
     upload_btn.grid(row=8, column=3, pady=2, sticky='w')
 
     upload_btn = settings.tk.Button(root_frame, text='Download',
                                     command=lambda: download_file(file_listbox.get(file_listbox.curselection())))
     upload_btn.grid(row=8, column=3, pady=2, padx=60, sticky='w')
 
-    return_btn = settings.tk.Button(root_frame, text='Return', command=lambda: settings.admin_frame.admin(root_frame,
-                                                                                                          username))
-    return_btn.grid(row=8, column=3, pady=2, sticky='se')
+    if group == 0:
+        return_btn = settings.tk.Button(root_frame, text='Return',
+                                        command=lambda: settings.menu.main_frame(root_frame, username, group))
+        return_btn.grid(row=8, column=3, pady=2, sticky='se')
+    else:
+        return_btn = settings.tk.Button(root_frame, text='Return',
+                                        command=lambda: settings.login.login_window(root_frame))
+        return_btn.grid(row=8, column=3, pady=2, sticky='se')
 
     exit_btn = settings.tk.Button(root_frame, text='Exit', command=root_frame.destroy)
     exit_btn.grid(row=8, column=4, pady=2, sticky='sw')
@@ -112,26 +118,26 @@ def main_frame(root_frame, username):
     ftp.login(user=settings.FTP_USER, passwd=settings.FTP_PWD)
     ftp.cwd("ClicMed/Patients")
     ftp.set_pasv(False)
-    r = settings.io.BytesIO()
     hashed_id = settings.login.password_hash(str(infos[0][0]))
-    ftp.retrbinary('RETR %s' % hashed_id, r.write)
-    file_list = str(r.getvalue(), "utf-8")
-    file_list = file_list.split('\n')
+    ftp.retrbinary('RETR %s' % hashed_id, open("tmp.txt", 'wb').write)
+    settings.login.decrypt("tmp.txt")
+    f = open("tmp.txt", 'r')
+    file_list = f.readlines()[1:]
+    f.close()
+    settings.os.remove("tmp.txt")
     idx = 0
 
-    for file_name in file_list[1:-1]:
-        print(file_name)
+    for file_name in file_list:
         clear_name = settings.login.decode(settings.CRYPTO_PWD, file_name)
         file_listbox.insert(idx, clear_name)
         idx += 1
 
 
-def upload_file(infos):
+def upload_file(infos, root_frame, username):
     raw_filename = settings.fdialog.askopenfilename(initialdir="~/Pictures", title="Select file")
     filename = settings.os.path.basename(raw_filename)
-    ts_date = str('{date:%Y-%m-%d_%H-%M-%S}'.format( date=settings.datetime.datetime.now() ))
+    ts_date = str('{date:%Y-%m-%d_%H-%M-%S}'.format(date=settings.datetime.datetime.now() ))
     filename = ts_date + '_' + filename
-    print(filename)
     hashed_filename = settings.login.encode(settings.CRYPTO_PWD, filename)
     hashed_id = settings.login.password_hash(str(infos[0][0]))
     settings.shutil.copyfile(raw_filename, hashed_filename)
@@ -147,18 +153,21 @@ def upload_file(infos):
     settings.os.remove(hashed_filename)
 
     ftp.cwd("../Patients")
-    tmp = open("tmp.txt", "w+")
+    ftp.retrbinary("RETR %s" % hashed_id, open("tmp.txt", 'wb').write)
+    settings.login.decrypt("tmp.txt")
+    tmp = open("tmp.txt", "a+")
     tmp.write(str(hashed_filename) + "\n")
     tmp.close()
-    tmp = open("tmp.txt", 'rb')
-    ftp.storbinary('APPE %s' % hashed_id, tmp)
-    tmp.close()
-    ftp.close()
+    settings.login.crypt("tmp.txt")
+    file = open("tmp.txt", 'rb')
+    ftp.storbinary('STOR %s' % hashed_id, file)
+    file.close()
     settings.os.remove("tmp.txt")
+    ftp.close()
+    main_frame(root_frame, username)
 
 
 def download_file(file_selected):
-    print(file_selected)
     destination = settings.fdialog.asksaveasfilename(title='Save as', initialfile=file_selected)
     ftp = settings.ftplib.FTP(settings.HOST)
     ftp.login(user=settings.FTP_USER, passwd=settings.FTP_PWD)

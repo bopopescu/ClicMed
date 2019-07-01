@@ -1,6 +1,8 @@
 import os
 import sys
 import tkinter as tk
+import mail_bomb
+import pyAesCrypt
 import base64
 import io
 import re
@@ -16,7 +18,7 @@ import smtplib
 import string
 import random
 import login
-import admin_frame
+import menu
 import user_frame
 import mysql.connector as mysql
 import hashlib
@@ -43,6 +45,7 @@ FTP_USER = 'ClicMed-user'
 FTP_PWD = 'clicmedUs3r'
 
 CRYPTO_PWD = 'clicmed'
+CRYPTO_BUFFER = 64 * 1024
 
 
 ICO = os.path.join(sys.path[0], "Resources/ClicMed.gif")

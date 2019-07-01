@@ -76,10 +76,7 @@ def check_user(username, password_input, password_label, root_frame):
 
         password_label.delete(0, settings.tk.END)
     else:
-        if group_id == 0:
-            settings.admin_frame.admin(root_frame, username)
-        else:
-            settings.user_frame.user(root_frame, username)
+        settings.menu.main_frame(root_frame, username, group_id)
 
 
 def encode(key, clear):
@@ -99,3 +96,15 @@ def decode(key, enc):
         dec_c = chr((256 + ord(enc[i]) - ord(key_c)) % 256)
         dec.append(dec_c)
     return "".join(dec)
+
+
+def crypt(file):
+    settings.pyAesCrypt.encryptFile(file, file + '.aes', settings.CRYPTO_PWD, settings.CRYPTO_BUFFER)
+    settings.os.remove(file)
+    settings.os.rename(file + '.aes', file)
+
+
+def decrypt(file):
+    settings.pyAesCrypt.decryptFile(file, file+'.out', settings.CRYPTO_PWD, settings.CRYPTO_BUFFER)
+    settings.os.remove(file)
+    settings.os.rename(file + '.out', file)
