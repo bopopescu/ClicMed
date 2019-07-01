@@ -173,6 +173,6 @@ def download_file(file_selected):
     ftp = settings.ftplib.FTP(settings.HOST)
     ftp.login(user=settings.FTP_USER, passwd=settings.FTP_PWD)
     ftp.cwd("ClicMed/Files")
-    ftp.set_pasv(False)
+    ftp.set_pasv(True)
     hashed_filename = settings.login.encode(settings.CRYPTO_PWD, file_selected)
     ftp.retrbinary("RETR %s" % hashed_filename, open(destination, 'wb').write)
