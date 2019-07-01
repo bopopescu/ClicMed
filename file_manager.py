@@ -95,7 +95,8 @@ def main_frame(root_frame, username, group):
     label61 = settings.tk.Label(root_frame, text=infos[0][6], font=("Arial", 10), fg='black', bg='white', width=10)
     label61.grid(row=7, column=1, sticky="w", padx=1, pady=1)
 
-    upload_btn = settings.tk.Button(root_frame, text='Upload', command=lambda: upload_file(infos, root_frame, username))
+    upload_btn = settings.tk.Button(root_frame, text='Upload',
+                                    command=lambda: upload_file(infos, root_frame, username, group))
     upload_btn.grid(row=8, column=3, pady=2, sticky='w')
 
     upload_btn = settings.tk.Button(root_frame, text='Download',
@@ -133,7 +134,7 @@ def main_frame(root_frame, username, group):
         idx += 1
 
 
-def upload_file(infos, root_frame, username):
+def upload_file(infos, root_frame, username, group):
     raw_filename = settings.fdialog.askopenfilename(initialdir="~/Pictures", title="Select file")
     filename = settings.os.path.basename(raw_filename)
     ts_date = str('{date:%Y-%m-%d_%H-%M-%S}'.format(date=settings.datetime.datetime.now() ))
