@@ -54,7 +54,6 @@ def main_frame(root_frame, username_set, country, group):
     name = settings.tk.StringVar()
     surname = settings.tk.StringVar()
     email = settings.tk.StringVar()
-    region = settings.tk.StringVar()
     groupid = settings.tk.StringVar()
 
     filter1 = settings.tk.Label(root_frame, text='Filter on:', font=("Arial", 10), fg='white', bg='#3c3f41')
@@ -216,7 +215,7 @@ def user_edit(user_id, label2, label3, label4, label5, label6):
     popup.minsize(150, 70)
     popup.grab_set()
     popup.tk.call('wm', 'iconphoto', popup._w, ico_popup)
-    label = settings.tk.Label(popup, text="Update Success !", font=("Arial", 11), fg='white', bg='#3c3f41')
+    label = settings.tk.Label(popup, text="Update Successful !", font=("Arial", 11), fg='white', bg='#3c3f41')
     label.pack(side="top", fill="x", pady=10)
     okay_btn = settings.tk.Button(popup, text="Okay", command=popup.destroy)
     okay_btn.pack()
@@ -230,6 +229,7 @@ def new_pass(user_id, email_user):
 
     password = random_password()
     message = f"Your ClicMed account password has just been reset. To log in use {password} as password."
+    message = 'Subject: {}\n\n{}'.format('New Password', message)
     send_mail(email_user, message)
 
     hashed_password = settings.login.password_hash(password)
@@ -269,6 +269,7 @@ def user_add(label1, label2, label3, label4, label5, label6, root_frame, usernam
 
     message = f"Your ClicMed account has just been created. To log in use {username_u} as username and {password} " \
         f"as password."
+    message = 'Subject: {}\n\n{}'.format('New Account Created', message)
     send_mail(email_u, message)
 
     hashed_password = settings.login.password_hash(password)

@@ -1,6 +1,7 @@
 import os
 import sys
 import tkinter as tk
+from tkinter import ttk
 import mail_bomber
 import base64
 import pyAesCrypt
