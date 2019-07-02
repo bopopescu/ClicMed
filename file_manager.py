@@ -1,3 +1,7 @@
+# Auteurs: Benjamin BEYERLE - Philippe DA SILVA OLIVEIRA - Karthike EZHILARASAN - Alexandre KOSTAS
+# Classe: SRC1 - 3E
+# Projet - ClicMed
+
 import settings
 
 
@@ -99,9 +103,10 @@ def main_frame(root_frame, username, group):
                                     command=lambda: upload_file(infos, root_frame, username, group))
     upload_btn.grid(row=8, column=3, pady=2, sticky='w')
 
-    upload_btn = settings.tk.Button(root_frame, text='Download',
-                                    command=lambda: download_file(file_listbox.get(file_listbox.curselection())))
-    upload_btn.grid(row=8, column=3, pady=2, padx=60, sticky='w')
+    download_btn = settings.tk.Button(root_frame, text='Download',
+                                      command=lambda: download_file(file_listbox.get(file_listbox.curselection()),
+                                                                    username))
+    download_btn.grid(row=8, column=3, pady=2, padx=60, sticky='w')
 
     if group == 0:
         return_btn = settings.tk.Button(root_frame, text='Return',
@@ -137,7 +142,7 @@ def main_frame(root_frame, username, group):
 def upload_file(infos, root_frame, username, group):
     raw_filename = settings.fdialog.askopenfilename(initialdir="~/Pictures", title="Select file")
     filename = settings.os.path.basename(raw_filename)
-    ts_date = str('{date:%Y-%m-%d_%H-%M-%S}'.format(date=settings.datetime.datetime.now() ))
+    ts_date = str('{date:%Y-%m-%d_%H-%M-%S}'.format(date=settings.datetime.datetime.now()))
     filename = ts_date + '_' + filename
     hashed_filename = settings.login.encode(settings.CRYPTO_PWD, filename)
     hashed_id = settings.login.password_hash(str(infos[0][0]))
@@ -166,6 +171,8 @@ def upload_file(infos, root_frame, username, group):
     settings.os.remove("tmp.txt")
     ftp.close()
 
+    settings.log.log(username, ' uploaded a file')
+
     popup = settings.tk.Toplevel()
     popup.wm_title("Success!")
     ico_popup = settings.tk.PhotoImage(file=settings.ICO)
@@ -184,7 +191,7 @@ def upload_file(infos, root_frame, username, group):
     main_frame(root_frame, username, group)
 
 
-def download_file(file_selected):
+def download_file(file_selected, username):
     destination = settings.fdialog.asksaveasfilename(title='Save as', initialfile=file_selected)
     ftp = settings.ftplib.FTP(settings.HOST)
     ftp.login(user=settings.FTP_USER, passwd=settings.FTP_PWD)
@@ -193,6 +200,7 @@ def download_file(file_selected):
     hashed_filename = settings.login.encode(settings.CRYPTO_PWD, file_selected)
     ftp.retrbinary("RETR %s" % hashed_filename, open(destination, 'wb').write)
 
+    settings.log.log(username, ' downloaded a file')
     popup = settings.tk.Toplevel()
     popup.wm_title("Success!")
     ico_popup = settings.tk.PhotoImage(file=settings.ICO)

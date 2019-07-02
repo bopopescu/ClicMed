@@ -1,13 +1,17 @@
+# Auteurs: Benjamin BEYERLE - Philippe DA SILVA OLIVEIRA - Karthike EZHILARASAN - Alexandre KOSTAS
+# Classe: SRC1 - 3E
+# Projet - ClicMed
+
 import os
 import sys
 import tkinter as tk
 from tkinter import ttk
+from queue import Queue
 import mail_bomber
 import base64
 import pyAesCrypt
 import ftplib
 import tkinter.filedialog as fdialog
-import file_manager
 import threading
 import itertools
 import signal
@@ -16,16 +20,21 @@ import time
 import smtplib
 import string
 import random
-import login
-import menu
 import mysql.connector as mysql
 import hashlib
-import user_manager
 import logging
-import log
 import shutil
 import datetime
+import socket
+import paramiko
+
+import log
+import user_manager
+import file_manager
+import login
+import menu
 import bruteforce
+import port_scanner
 
 
 # Settings global variables

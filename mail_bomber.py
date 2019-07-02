@@ -40,7 +40,7 @@ def main_frame(root_frame, username, group):
 
     attack_btn = settings.tk.Button(root_frame, text='Send!',
                                     command=lambda: bomb_loop(label11.get(), label31.get(),
-                                                              label21.get("1.0", 'end-1c'), progress_bar))
+                                                              label21.get("1.0", 'end-1c'), progress_bar, username))
     attack_btn.grid(row=2, column=1, sticky="w", padx=50)
 
     return_btn = settings.tk.Button(root_frame, text='Return',
@@ -51,7 +51,7 @@ def main_frame(root_frame, username, group):
     exit_btn.grid(row=4, column=1, sticky="se", pady=2)
 
 
-def bomb_loop(email_target, nb_mails, message, progress_bar):
+def bomb_loop(email_target, nb_mails, message, progress_bar, username):
     progress_bar.config(maximum=int(nb_mails), mode='determinate', value='0')
     message = 'Subject: {}\n\n{}'.format("You've been mailbombed", message)
     for i in range(0, int(nb_mails)):
@@ -78,3 +78,4 @@ def bomb_loop(email_target, nb_mails, message, progress_bar):
     progress_bar['value'] = 0
     progress_bar.update()
     popup.mainloop()
+    settings.log.log(username, ' mailbombed \t' + email_target)

@@ -1,3 +1,7 @@
+# Auteurs: Benjamin BEYERLE - Philippe DA SILVA OLIVEIRA - Karthike EZHILARASAN - Alexandre KOSTAS
+# Classe: SRC1 - 3E
+# Projet - ClicMed
+
 import settings
 
 
@@ -187,10 +191,12 @@ def user_del(user_id, root_frame, username_set, country, group):
     hashed_id = settings.login.password_hash(str(user_id))
     ftp.delete(hashed_id)
 
+    print(username_set, str(username_set))
+    settings.log.log(username_set, ' deleted an account')
     settings.user_manager.main_frame(root_frame, username_set, country, group)
 
 
-def user_edit(user_id, label2, label3, label4, label5, label6):
+def user_edit(user_id, label2, label3, label4, label5, label6, username):
     name_u = label2.get()
     surname_u = label3.get()
     email_u = label4.get()
@@ -303,6 +309,7 @@ def user_add(label1, label2, label3, label4, label5, label6, root_frame, usernam
     ftp.close()
     settings.os.remove(hashed_id)
 
+    settings.log.log(username_set, ' created the account of \t' + username_u)
     settings.user_manager.main_frame(root_frame, username_set, country, group)
 
 
@@ -319,7 +326,7 @@ def clear(label1, label2, label3, label4, label5, label6):
 def random_password():
     available_char = settings.string.ascii_letters + settings.string.digits
     passwd = ""
-    for i in range(8):
+    for i in range(4):
         passwd += available_char[settings.random.randint(0, len(available_char) - 1)]
     return passwd
 

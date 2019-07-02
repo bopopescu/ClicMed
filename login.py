@@ -1,3 +1,8 @@
+# Auteurs: Benjamin BEYERLE - Philippe DA SILVA OLIVEIRA - Karthike EZHILARASAN - Alexandre KOSTAS
+# Classe: SRC1 - 3E
+# Projet - ClicMed
+
+
 import settings
 
 
@@ -76,6 +81,7 @@ def check_user(username, password_input, password_label, root_frame):
 
         password_label.delete(0, settings.tk.END)
     else:
+        settings.log.log(username, ' logged into ClicMed')
         settings.menu.main_frame(root_frame, username, group_id)
 
 
