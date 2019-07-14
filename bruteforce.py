@@ -26,7 +26,7 @@ def main_frame(root_frame, username, group):
     filter1_choice.set(username_list[0])
     filter2_choice.set('4')
 
-    password_length = ['1', '2', '3', '4', '6', '7', '8']
+    password_length = ['1', '2', '3', '4', '5', '6', '7', '8']
 
     filter1 = settings.tk.Label(root_frame, text='Select user : ', font=("Arial", 10), fg='white', bg='#3c3f41')
     filter1.grid(row=0, column=0, pady=2, sticky="e")
@@ -76,7 +76,7 @@ def bruteforcer(username_target, length, progress_bar, nb_try, found):
     cursor = cnx.cursor(buffered=True)
     cursor.execute("SELECT PasswordHash FROM Users WHERE Username = %s", (username_target, ))
     cursed = cursor.fetchone()
-    hashed_user_password = str(cursed[0])[2:-3]
+    hashed_user_password = str(cursed[0])
     cursor.close()
     cnx.close()
     password_to_attempt = settings.itertools.product(available_char, repeat=length)
