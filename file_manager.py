@@ -5,6 +5,7 @@
 import settings
 
 
+# Define main frame
 def main_frame(root_frame, username, group):
 
     settings.login.clear_window(root_frame)
@@ -32,6 +33,7 @@ def main_frame(root_frame, username, group):
     canvas.columnconfigure(0, weight=1)
     canvas.rowconfigure(0, weight=1)
 
+    # Mysql Connector, collect all username then info of user, by default the one connected or the one chosen
     cnx = settings.mysql.connect(host=settings.HOST, user=settings.MYSQL_USER, password=settings.MYSQL_USER_PWD,
                                  database=settings.MYSQL_DB)
     cursor = cnx.cursor(buffered=True)
@@ -46,6 +48,7 @@ def main_frame(root_frame, username, group):
 
     cnx.close()
 
+    # Admin users can select which user they want to select, normal user are locked on their account
     if group == 0:
         filter1_choice = settings.tk.StringVar(root_frame)
         filter1_choice.set(username)
@@ -61,6 +64,7 @@ def main_frame(root_frame, username, group):
                                        command=lambda: main_frame(root_frame, filter1_choice.get()[2:-3], group))
         filtr_btn.grid(row=0, column=1, pady=2, sticky="w", padx=100)
 
+    # Fill each info box with infos from MySQL
     labelFile = settings.tk.Label(root_frame, text='File :', font=("Arial", 10), fg='white', bg='#3c3f41')
     labelFile.grid(row=0, column=3, pady=2, sticky="w")
 
@@ -120,6 +124,7 @@ def main_frame(root_frame, username, group):
     exit_btn = settings.tk.Button(root_frame, text='Exit', command=root_frame.destroy)
     exit_btn.grid(row=8, column=4, pady=2, sticky='sw')
 
+    # Connect to FTP server and medical file with the list of all files associated with the user
     ftp = settings.ftplib.FTP(settings.HOST)
     ftp.login(user=settings.FTP_USER, passwd=settings.FTP_PWD)
     ftp.cwd("ClicMed/Patients")

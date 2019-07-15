@@ -92,6 +92,7 @@ def bruteforcer(username_target, length, progress_bar, nb_try, found):
         attempt = ''.join(attempt)
         hashed_attempt = settings.login.password_hash(attempt)
         if hashed_attempt == hashed_user_password:
+            found.delete(0, settings.tk.END)
             found.insert(0, attempt)
             found.grid(row=2, column=1, pady=2, sticky="e")
             break

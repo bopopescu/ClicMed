@@ -1,26 +1,21 @@
-import settings
+import datetime
+import os
 
-settings.log.init_log('backup')
 
-# Repertoire de destination
-root_dest = settings.os.path.join('/home/ftp/ClicMed/User/User1/backup')
-# Repertoire racine du user
-root_directory = settings.os.path.join('/home/ftp/ClicMed/User/User1/')
-print(root_directory)
+def log(username, message):
 
-# On recupere la date dans une variable
-date = settings.datetime.datetime.now().strftime('%Y-%m-%d')
+    ts_date = str('{date:%Y-%m-%d_%H:%M:%S}'.format(date=datetime.datetime.now()))
+    log_string = ts_date + '\t' + username + '\t' + message
+    command = 'sudo echo "' + log_string + '" >> /home/ftp/log/ClicMed.log'
+    os.system(command)
 
-print("\n-----------------------------------------------------------\n")
-print("Backup of " + root_directory + "docs" + "\n")
-print("-----------------------------------------------------------\n")
 
-# Creation de l'archive backup_XX-XX-XX.tar.gz contenant le repertoire "docs" dans le repertoire de destination
-try:
-    settings.shutil.make_archive(
-        root_dest + '/' + 'backup_' + date, 'gztar',
-        root_directory,
-        'docs',
-        )
-except:
-       print ("File or directory doesn't exist !!!")
+for i in range(5, 0, -1):
+    current = '/home/ftp/Backup/Backup.' + str(i) + '.tar.gz'
+    future = '/home/ftp/Backup/Backup.' + str(i+1) + '.tar.gz'
+    print(current, future)
+    if os.path.isfile(current):
+        os.rename(current, future)
+os.rename('Backup.tar.gz', 'Backup.1.tar.gz')
+os.system('tar -C /home/ftp/ -cvf /home/ftp/Backup/Backup.tar.gz ClicMed')
+log('System', ' did a backup')

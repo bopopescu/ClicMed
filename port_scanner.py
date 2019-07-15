@@ -52,7 +52,8 @@ def main_frame(root_frame, username, group):
     label31.grid(row=1, column=1, pady=2, sticky='e')
 
     scan_btn = settings.tk.Button(root_frame, text='Scan!',
-                                  command=lambda: scanner(label11.get(), file_listbox, label21.get(), label31.get()))
+                                  command=lambda: scanner(label11.get(), file_listbox, label21.get(), label31.get(),
+                                                          username))
     scan_btn.grid(row=0, column=2, sticky="w", pady=2, padx=5)
 
     return_btn = settings.tk.Button(root_frame, text='Return',
@@ -63,12 +64,15 @@ def main_frame(root_frame, username, group):
     exit_btn.grid(row=4, column=1, sticky="se", pady=2)
 
 
-def scanner(target, listbox, port_min, port_max):
+def scanner(target, listbox, port_min, port_max, username):
 
     port_list = []
+    listbox.delete(0, settings.tk.END)
+    start = settings.time.time()
 
     def portscan(port):
         s = settings.socket.socket(settings.socket.AF_INET, settings.socket.SOCK_STREAM)
+        s.settimeout(0.2)
         try:
             con = s.connect((target, port))
             port_list.append(port)
@@ -99,8 +103,6 @@ def scanner(target, listbox, port_min, port_max):
         # begins, must come after daemon definition
         t.start()
 
-    start = settings.time.time()
-
     # 100 jobs assigned.
     for worker in range(int(port_min), int(port_max)):
         q.put(worker)
@@ -111,3 +113,20 @@ def scanner(target, listbox, port_min, port_max):
     for port in port_list:
         listbox.insert(idx, str(port) + ' is open !!')
         idx += 1
+
+    listbox.insert(idx, 'Scanned in: ' + str(int(settings.time.time() - start)) + ' seconds')
+    settings.log.log(username, ' did a ports scan')
+    popup = settings.tk.Toplevel()
+    popup.wm_title("Task done!")
+    ico_popup = settings.tk.PhotoImage(file=settings.ICO)
+    popup.configure(background='#3c3f41')
+    popup.geometry('150x130')
+    popup.maxsize(150, 70)
+    popup.minsize(150, 70)
+    popup.grab_set()
+    popup.tk.call('wm', 'iconphoto', popup._w, ico_popup)
+    label = settings.tk.Label(popup, text="Scan Finished !", font=("Arial", 11), fg='white', bg='#3c3f41')
+    label.pack(side="top", fill="x", pady=10)
+    okay_btn = settings.tk.Button(popup, text="Okay", command=popup.destroy)
+    okay_btn.pack()
+    popup.mainloop()
